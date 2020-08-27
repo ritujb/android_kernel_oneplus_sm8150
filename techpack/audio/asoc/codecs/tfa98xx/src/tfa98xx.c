@@ -3627,7 +3627,7 @@ enum Tfa98xx_Error tfa98xx_read_data_from_hostdsp(struct tfa_device *tfa,
 }
 
 static uint8_t send_to_dsp_count;
-static int tfa98xx_read_memtrack_data(struct tfa98xx *tfa98xx, int *pLivedata)
+static int __maybe_unused tfa98xx_read_memtrack_data(struct tfa98xx *tfa98xx, int *pLivedata)
 {
 	enum Tfa98xx_Error ret = Tfa98xx_Error_Ok;
 	/* the buffer is for stereo usecase. */
