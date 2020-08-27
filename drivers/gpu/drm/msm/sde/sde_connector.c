@@ -727,6 +727,9 @@ int sde_connector_update_hbm(struct sde_connector *c_conn)
 
 			/* notify brightness clone bl event */
 			sysfs_notify(&c_conn->bl_device->dev.kobj, NULL, "brightness_clone");
+
+			dsi_display->panel->dc_enable = true;
+			pr_debug("fod restore DC\n");
 		}
 		mutex_unlock(&dsi_display->panel->panel_lock);
 		if (rc) {
@@ -755,6 +758,12 @@ int sde_connector_update_hbm(struct sde_connector *c_conn)
 
 			/* reset backlight level after HBM on*/
 			dsi_panel_set_backlight(dsi_display->panel, dsi_display->panel->last_bl_lvl);
+
+			if (dsi_display->panel->dc_enable) {
+				dsi_display->panel->dc_enable = false;
+				pr_debug("fod set CRC OFF\n");
+				dsi_display_write_panel(dsi_display, &dsi_display->panel->cur_mode->priv_info->cmd_sets[DSI_CMD_SET_DISP_CRC_OFF]);
+			}
 
 			/* force disable CRC */
 			pr_debug("fod set CRC OFF\n");
