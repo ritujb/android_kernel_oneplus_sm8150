@@ -26,6 +26,6 @@ steps:
     - ./build-kernel --proton --lto
   when:
     branch:
-      - auto-kernel
+      - auto-kernel-ci
     event:
       - push
