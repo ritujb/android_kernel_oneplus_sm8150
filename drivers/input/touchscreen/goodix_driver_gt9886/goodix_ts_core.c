@@ -649,7 +649,7 @@ static ssize_t goodix_ts_irq_info_store(struct device *dev,
 
 static int gtp_set_cur_value(int gtp_mode, int gtp_value)
 {
-	u8 state_data[3] = {0};
+	u8 state_data[3] = { 0 };
 	u8 goodix_game_value = 0;
 	u8 temp_value = 0;
 	int ret = 0;
@@ -657,22 +657,17 @@ static int gtp_set_cur_value(int gtp_mode, int gtp_value)
 
 	struct goodix_ts_device *dev = goodix_core_data->ts_dev;
 
-	if (gtp_mode >= Touch_Mode_NUM && gtp_mode < 0) {
-		ts_info("gtp mode is error:%d", gtp_mode);
+	if (gtp_mode >= Touch_Mode_NUM && gtp_mode < 0)
 		return -EINVAL;
-	}
 
 	goodix_core_data->touch_mode[gtp_mode][SET_CUR_VALUE] = gtp_value;
 
 	if (goodix_core_data->touch_mode[gtp_mode][SET_CUR_VALUE] >
 			goodix_core_data->touch_mode[gtp_mode][GET_MAX_VALUE]) {
-
 		goodix_core_data->touch_mode[gtp_mode][SET_CUR_VALUE] =
 				goodix_core_data->touch_mode[gtp_mode][GET_MAX_VALUE];
-
 	} else if (goodix_core_data->touch_mode[gtp_mode][SET_CUR_VALUE] <
 			goodix_core_data->touch_mode[gtp_mode][GET_MIN_VALUE]) {
-
 		goodix_core_data->touch_mode[gtp_mode][SET_CUR_VALUE] =
 				goodix_core_data->touch_mode[gtp_mode][GET_MIN_VALUE];
 	}
@@ -685,15 +680,14 @@ static int gtp_set_cur_value(int gtp_mode, int gtp_value)
 		state_data[1] = 0x00;
 		state_data[2] = 0xF1;
 		ret = goodix_i2c_write(dev, GTP_GAME_CMD_ADD, state_data, 3);
-		if (ret < 0) {
+		if (ret < 0)
 			ts_info("GAME -> exit game mode fail");
-		}
 		goodix_game_value = 0;
 		goodix_core_data->touch_mode[gtp_mode][GET_CUR_VALUE] = goodix_core_data->touch_mode[gtp_mode][GET_DEF_VALUE];
 		return ret;
-
 	} else {
-		goodix_core_data->touch_mode[Touch_Panel_Orientation][SET_CUR_VALUE] = 1; //Temp Workaround
+		 /* Temp Workaround */
+		goodix_core_data->touch_mode[Touch_Panel_Orientation][SET_CUR_VALUE] = 1;
 
 		for (i = 0; i < Touch_Mode_NUM; i++) {
 			switch (i) {
@@ -719,7 +713,7 @@ static int gtp_set_cur_value(int gtp_mode, int gtp_value)
 					goodix_game_value |= (temp_value << 4);
 					break;
 			case Touch_Panel_Orientation:
-					/* 0,1,2,3 = 0, 90, 180,270 */
+					/* 0, 1, 2, 3 = 0, 90, 180, 270 */
 					temp_value =
 					goodix_core_data->touch_mode[Touch_Panel_Orientation][SET_CUR_VALUE];
 					if (temp_value == 3)
@@ -737,23 +731,19 @@ static int gtp_set_cur_value(int gtp_mode, int gtp_value)
 		}
 
 		goodix_core_data->touch_mode[gtp_mode][GET_CUR_VALUE] =
-						goodix_core_data->touch_mode[gtp_mode][SET_CUR_VALUE];
+					goodix_core_data->touch_mode[gtp_mode][SET_CUR_VALUE];
 
 		state_data[0] = GTP_GAME_CMD;
 		state_data[1] = goodix_game_value;
 		state_data[2] = 0xFF & (0 - state_data[0] - state_data[1]);
+		ts_info("GAME -> MODE:%d, VALUE:%d --> cmd1:0x%x, cmd2:0x%x, cmd3:0x%x",
+			gtp_mode, gtp_value, state_data[0], state_data[1], state_data[2]);
 
-		ts_info("GAME -> MODE:%d, VALUE:%d --> cmd1:0x%x, cmd2:0x%x, cmd3:0x%x", gtp_mode, gtp_value, state_data[0], state_data[1], state_data[2]);
-
-		ret = goodix_i2c_write(dev, GTP_GAME_CMD_ADD, state_data, 3);
-
-		if (ret < 0) {
+		ret = goodix_i2c_write(dev, GTP_GAME_CMD_ADD, state_data, 5);
+		if (ret < 0)
 			ts_info("GAME -> change game mode fail");
-		}
-		return ret;
-
 	}
-
+	return ret;
 }
 
 static void gtp_init_touchmode_data(void)
@@ -767,28 +757,28 @@ static void gtp_init_touchmode_data(void)
 	goodix_core_data->touch_mode[Touch_Game_Mode][SET_CUR_VALUE] = 0;
 	goodix_core_data->touch_mode[Touch_Game_Mode][GET_CUR_VALUE] = 0;
 
-	/* finger hysteresis */
+	/* Finger hysteresis */
 	goodix_core_data->touch_mode[Touch_UP_THRESHOLD][GET_MAX_VALUE] = 3;
 	goodix_core_data->touch_mode[Touch_UP_THRESHOLD][GET_MIN_VALUE] = 0;
 	goodix_core_data->touch_mode[Touch_UP_THRESHOLD][GET_DEF_VALUE] = 0;
 	goodix_core_data->touch_mode[Touch_UP_THRESHOLD][SET_CUR_VALUE] = 0;
 	goodix_core_data->touch_mode[Touch_UP_THRESHOLD][GET_CUR_VALUE] = 0;
 
-	/*  Tolerance */
+	/* Tolerance */
 	goodix_core_data->touch_mode[Touch_Tolerance][GET_MAX_VALUE] = 3;
 	goodix_core_data->touch_mode[Touch_Tolerance][GET_MIN_VALUE] = 0;
 	goodix_core_data->touch_mode[Touch_Tolerance][GET_DEF_VALUE] = 0;
 	goodix_core_data->touch_mode[Touch_Tolerance][SET_CUR_VALUE] = 0;
 	goodix_core_data->touch_mode[Touch_Tolerance][GET_CUR_VALUE] = 0;
 
-	/*	edge filter */
+	/* Edge filter */
 	goodix_core_data->touch_mode[Touch_Edge_Filter][GET_MAX_VALUE] = 3;
 	goodix_core_data->touch_mode[Touch_Edge_Filter][GET_MIN_VALUE] = 0;
 	goodix_core_data->touch_mode[Touch_Edge_Filter][GET_DEF_VALUE] = 1;
 	goodix_core_data->touch_mode[Touch_Edge_Filter][SET_CUR_VALUE] = 1;
 	goodix_core_data->touch_mode[Touch_Edge_Filter][GET_CUR_VALUE] = 1;
 
-	/*	Orientation */
+	/* Orientation */
 	goodix_core_data->touch_mode[Touch_Panel_Orientation][GET_MAX_VALUE] = 3;
 	goodix_core_data->touch_mode[Touch_Panel_Orientation][GET_MIN_VALUE] = 0;
 	goodix_core_data->touch_mode[Touch_Panel_Orientation][GET_DEF_VALUE] = 0;
@@ -796,7 +786,7 @@ static void gtp_init_touchmode_data(void)
 	goodix_core_data->touch_mode[Touch_Panel_Orientation][GET_CUR_VALUE] = 0;
 
 	for (i = 0; i < Touch_Mode_NUM; i++) {
-		pr_info("GAME --> mode:%d, set cur:%d, get cur:%d, def:%d, min:%d, max:%d\n",
+		ts_info("GAME --> mode:%d, set cur:%d, get cur:%d, def:%d, min:%d, max:%d\n",
 			i,
 			goodix_core_data->touch_mode[i][SET_CUR_VALUE],
 			goodix_core_data->touch_mode[i][GET_CUR_VALUE],
@@ -804,7 +794,6 @@ static void gtp_init_touchmode_data(void)
 			goodix_core_data->touch_mode[i][GET_MIN_VALUE],
 			goodix_core_data->touch_mode[i][GET_MAX_VALUE]);
 	}
-
 	return;
 }
 
@@ -813,21 +802,21 @@ static ssize_t goodix_ts_game_mode_show(struct device *dev,
 {
 	struct goodix_ts_core *core_data = dev_get_drvdata(dev);
 
-	if(core_data == NULL)
-	  return snprintf(buf, PAGE_SIZE, "error\n");
+	if (core_data == NULL)
+		return snprintf(buf, PAGE_SIZE, "error\n");
 
-        return snprintf(buf, PAGE_SIZE, "%d %d %d %d\n",
-			goodix_core_data->touch_mode[Touch_Game_Mode][GET_CUR_VALUE],
-			goodix_core_data->touch_mode[Touch_Tolerance][GET_CUR_VALUE],
-			goodix_core_data->touch_mode[Touch_UP_THRESHOLD][GET_CUR_VALUE],
-			goodix_core_data->touch_mode[Touch_Edge_Filter][GET_CUR_VALUE]);
+	return snprintf(buf, PAGE_SIZE, "%d %d %d %d\n",
+		goodix_core_data->touch_mode[Touch_Game_Mode][GET_CUR_VALUE],
+		goodix_core_data->touch_mode[Touch_Tolerance][GET_CUR_VALUE],
+		goodix_core_data->touch_mode[Touch_UP_THRESHOLD][GET_CUR_VALUE],
+		goodix_core_data->touch_mode[Touch_Edge_Filter][GET_CUR_VALUE]);
 }
 
 static ssize_t goodix_ts_game_mode_store(struct device *dev,
 		struct device_attribute *attr, const char *buf, size_t count)
 {
 	int rc, i;
-	unsigned u[Touch_Mode_NUM] = { 0 };
+	unsigned int u[Touch_Mode_NUM] = { 0 };
 
 	ts_info("GAME -> buf : %s, len : %d\n", buf, count);
 
@@ -838,11 +827,10 @@ static ssize_t goodix_ts_game_mode_store(struct device *dev,
 		return -EINVAL;
 	}
 
-	for (i = 0; i < Touch_Mode_NUM; i++) {
+	for (i = 0; i < Touch_Mode_NUM; i++)
 		gtp_set_cur_value(i, u[i]);
-	}
 
-    return count;
+	return count;
 }
 
 static DEVICE_ATTR(extmod_info, 0444, goodix_ts_extmod_show, NULL);
@@ -854,7 +842,7 @@ static DEVICE_ATTR(send_cfg, 0220, NULL, goodix_ts_send_cfg_store);
 static DEVICE_ATTR(read_cfg, 0444, goodix_ts_read_cfg_show, NULL);
 static DEVICE_ATTR(irq_info, 0664,
 		goodix_ts_irq_info_show, goodix_ts_irq_info_store);
-static DEVICE_ATTR(game_mode, S_IRUGO | S_IWUSR | S_IWGRP,
+static DEVICE_ATTR(game_mode, 0664,
 		goodix_ts_game_mode_show, goodix_ts_game_mode_store);
 
 static struct attribute *sysfs_attrs[] = {

@@ -93,7 +93,7 @@
 #define GTP_GAME_CMD      0x0E
 #define GTP_EXIT_GAME_CMD 0x0F
 
-/*CUR,DEFAULT,MIN,MAX*/
+/*CUR, DEFAULT, MIN, MAX*/
 #define VALUE_TYPE_SIZE 6
 #define VALUE_GRIP_SIZE 9
 enum MODE_CMD {
@@ -107,12 +107,12 @@ enum MODE_CMD {
 };
 
 enum  MODE_TYPE {
-	Touch_Game_Mode        = 0,
-	Touch_Tolerance        = 1,
-	Touch_UP_THRESHOLD     = 2,
-	Touch_Edge_Filter      = 3,
-	Touch_Panel_Orientation = 4,
-	Touch_Mode_NUM         = 5,
+	Touch_Game_Mode		= 0,
+	Touch_Tolerance		= 1,
+	Touch_UP_THRESHOLD	= 2,
+	Touch_Edge_Filter	= 3,
+	Touch_Panel_Orientation	= 4,
+	Touch_Mode_NUM		= 5,
 };
 
 #define CONFIG_TOUCHSCREEN_GOODIX_DEBUG_FS
